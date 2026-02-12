@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎮 Мафія & Казино</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .balance {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(243, 87, 108, 0.3);
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .menu-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .menu-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .menu-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .players-list {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .player-item:last-child {
+            border-bottom: none;
+        }
+        
+        .host-badge {
+            background: #ffd700;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin: 8px 0;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .slot-machine {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            font-size: 48px;
+            margin: 20px 0;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .bet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .bet-button {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 16px;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .bet-button:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
+        
+        .result-message {
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .win {
+            background: rgba(0,255,0,0.2);
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0,255,0,0.3);
+        }
+        
+        .lose {
+            background: rgba(255,0,0,0.2);
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255,0,0,0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .back-button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        
+        .back-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка с балансом -->
+        <div class="header">
+            <span id="username">👤 Завантаження...</span>
+            <span class="balance" id="balance">💰 0 🪙</span>
+        </div>
+        
+        <!-- Главное меню -->
+        <div id="mainMenu">
+            <div class="menu-grid">
+                <div class="menu-card" onclick="showGame('mafia')">
+                    <div class="menu-icon">🔪</div>
+                    <div class="menu-title">Мафія</div>
+                    <div style="opacity: 0.8;">Лобі, ролі, голосування</div>
+                </div>
+                <div class="menu-card" onclick="showGame('casino')">
+                    <div class="menu-icon">🎰</div>
+                    <div class="menu-title">Казино</div>
+                    <div style="opacity: 0.8;">Слоти, виграші</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция Мафии -->
+        <div id="mafiaSection" class="hidden">
+            <div class="back-button" onclick="backToMenu()">← Назад</div>
+            
+            <div class="section">
+                <h2 style="margin-bottom: 20px;">🔪 МАФІЯ</h2>
+                
+                <div id="mafiaLobby">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <span>🆔 ЛОБІ</span>
+                        <span id="playersCount">0/16</span>
+                    </div>
+                    
+                    <div class="players-list" id="playersList">
+                        <!-- Список игроков -->
+                    </div>
+                    
+                    <button class="button" onclick="joinMafia()">➕ ПРИЄДНАТИСЯ</button>
+                    <button class="button" onclick="leaveMafia()">🚪 ВИЙТИ</button>
+                    <button class="button" id="startGameBtn" onclick="startMafia()" disabled>▶️ ПОЧАТИ ГРУ (6+)</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция Казино -->
+        <div id="casinoSection" class="hidden">
+            <div class="back-button" onclick="backToMenu()">← Назад</div>
+            
+            <div class="section">
+                <h2 style="margin-bottom: 20px;">🎰 КАЗИНО</h2>
+                
+                <!-- Меню казино -->
+                <div id="casinoMenu">
+                    <div class="menu-grid">
+                        <div class="menu-card" onclick="showSlots()">
+                            <div class="menu-icon">🎰</div>
+                            <div class="menu-title">Слоти</div>
+                            <div style="opacity: 0.8;">Крути барабани</div>
+                        </div>
+                    </div>
+                    
+                    <button class="button" onclick="addBalance()">💰 ПОПОВНИТИ БАЛАНС (+500)</button>
+                    <button class="button" onclick="showStats()">📊 СТАТИСТИКА</button>
+                </div>
+                
+                <!-- Игра в слоты -->
+                <div id="slotsGame" class="hidden">
+                    <div class="slot-machine" id="slotResult">
+                        🎰 🎰 🎰
+                    </div>
+                    
+                    <div id="slotMessage" class="result-message hidden"></div>
+                    
+                    <div class="bet-grid">
+                        <button class="bet-button" onclick="spinSlots(10)">10 🪙</button>
+                        <button class="bet-button" onclick="spinSlots(50)">50 🪙</button>
+                        <button class="bet-button" onclick="spinSlots(100)">100 🪙</button>
+                        <button class="bet-button" onclick="spinSlots(500)">500 🪙</button>
+                    </div>
+                    
+                    <button class="button" onclick="backToCasino()">🔙 НАЗАД</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+        
+        // Данные пользователя
+        let userData = {
+            id: null,
+            username: 'Гравець',
+            balance: 1000,
+            wins: 0,
+            losses: 0,
+            games: 0
+        };
+        
+        // Данные мафии
+        let mafiaGame = {
+            players: [],
+            host: null,
+            status: 'lobby'
+        };
+        
+        // Получаем данные из initData
+        if (tg.initDataUnsafe?.user) {
+            userData.id = tg.initDataUnsafe.user.id;
+            userData.username = tg.initDataUnsafe.user.username || 'Гравець';
+        }
+        
+        // Обновляем UI
+        document.getElementById('username').innerHTML = `👤 @${userData.username}`;
+        document.getElementById('balance').innerHTML = `💰 ${userData.balance} 🪙`;
+        
+        // Навигация
+        function showGame(game) {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('mafiaSection').classList.add('hidden');
+            document.getElementById('casinoSection').classList.add('hidden');
+            
+            if (game === 'mafia') {
+                document.getElementById('mafiaSection').classList.remove('hidden');
+                loadMafiaLobby();
+            } else if (game === 'casino') {
+                document.getElementById('casinoSection').classList.remove('hidden');
+                document.getElementById('casinoMenu').classList.remove('hidden');
+                document.getElementById('slotsGame').classList.add('hidden');
+            }
+        }
+        
+        function backToMenu() {
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('mafiaSection').classList.add('hidden');
+            document.getElementById('casinoSection').classList.add('hidden');
+        }
+        
+        // ============= МАФИЯ =============
+        
+        function loadMafiaLobby() {
+            tg.sendData(JSON.stringify({
+                action: 'get_mafia_lobby',
+                user_id: userData.id
+            }));
+        }
+        
+        function joinMafia() {
+            tg.sendData(JSON.stringify({
+                action: 'mafia_join',
+                user_id: userData.id,
+                username: userData.username
+            }));
+        }
+        
+        function leaveMafia() {
+            tg.sendData(JSON.stringify({
+                action: 'mafia_leave',
+                user_id: userData.id
+            }));
+        }
+        
+        function startMafia() {
+            if (mafiaGame.players.length >= 6) {
+                tg.sendData(JSON.stringify({
+                    action: 'mafia_start',
+                    user_id: userData.id
+                }));
+            }
+        }
+        
+        function updateMafiaLobby(players, host) {
+            mafiaGame.players = players;
+            mafiaGame.host = host;
+            
+            const playersList = document.getElementById('playersList');
+            const playersCount = document.getElementById('playersCount');
+            const startBtn = document.getElementById('startGameBtn');
+            
+            playersCount.innerHTML = `${players.length}/16`;
+            
+            if (players.length === 0) {
+                playersList.innerHTML = '<div style="text-align: center; padding: 20px;">👥 Немає гравців</div>';
+                startBtn.disabled = true;
+                return;
+            }
+            
+            let html = '';
+            players.forEach(player => {
+                const isHost = player.id === host;
+                html += `
+                    <div class="player-item">
+                        <span>
+                            👤 @${player.name}
+                            ${isHost ? '<span class="host-badge" style="margin-left: 10px;">ХОСТ</span>' : ''}
+                        </span>
+                        <span>❤️</span>
+                    </div>
+                `;
+            });
+            
+            playersList.innerHTML = html;
+            
+            // Проверяем возможность старта
+            const isHost = userData.id === host;
+            startBtn.disabled = !(isHost && players.length >= 6);
+            startBtn.innerHTML = isHost ? '▶️ ПОЧАТИ ГРУ (6+)' : '⏳ Очікуйте хоста...';
+        }
+        
+        // ============= КАЗИНО =============
+        
+        function showSlots() {
+            document.getElementById('casinoMenu').classList.add('hidden');
+            document.getElementById('slotsGame').classList.remove('hidden');
+            document.getElementById('slotResult').innerHTML = '🎰 🎰 🎰';
+            document.getElementById('slotMessage').classList.add('hidden');
+        }
+        
+        function backToCasino() {
+            document.getElementById('casinoMenu').classList.remove('hidden');
+            document.getElementById('slotsGame').classList.add('hidden');
+        }
+        
+        function spinSlots(bet) {
+            if (userData.balance < bet) {
+                showMessage(`❌ Недостатньо коштів! Потрібно ${bet} 🪙`, 'lose');
+                return;
+            }
+            
+            // Анимация
+            const symbols = ['🍒', '💎', '7️⃣', '🎰', '🍋'];
+            let spins = 0;
+            const interval = setInterval(() => {
+                const slot1 = symbols[Math.floor(Math.random() * symbols.length)];
+                const slot2 = symbols[Math.floor(Math.random() * symbols.length)];
+                const slot3 = symbols[Math.floor(Math.random() * symbols.length)];
+                document.getElementById('slotResult').innerHTML = `${slot1} ${slot2} ${slot3}`;
+                spins++;
+                
+                if (spins > 15) {
+                    clearInterval(interval);
+                    tg.sendData(JSON.stringify({
+                        action: 'slots_spin',
+                        user_id: userData.id,
+                        bet: bet
+                    }));
+                }
+            }, 80);
+        }
+        
+        function addBalance() {
+            tg.sendData(JSON.stringify({
+                action: 'casino_add_balance',
+                user_id: userData.id
+            }));
+        }
+        
+        function showStats() {
+            tg.sendData(JSON.stringify({
+                action: 'casino_stats',
+                user_id: userData.id
+            }));
+        }
+        
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('slotMessage');
+            messageEl.innerHTML = text;
+            messageEl.className = `result-message ${type}`;
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Обработка данных от бота
+        tg.onEvent('webAppData', function(data) {
+            try {
+                const response = JSON.parse(data);
+                
+                if (response.type === 'balance_update') {
+                    userData.balance = response.balance;
+                    document.getElementById('balance').innerHTML = `💰 ${userData.balance} 🪙`;
+                }
+                else if (response.type === 'mafia_lobby') {
+                    updateMafiaLobby(response.players, response.host);
+                }
+                else if (response.type === 'mafia_started') {
+                    tg.showAlert('🔪 Гра розпочалася! Ролі розподілені.');
+                    backToMenu();
+                }
+                else if (response.type === 'slots_result') {
+                    document.getElementById('slotResult').innerHTML = response.slots;
+                    showMessage(response.message, response.win ? 'win' : 'lose');
+                    userData.balance = response.balance;
+                    document.getElementById('balance').innerHTML = `💰 ${userData.balance} 🪙`;
+                    
+                    if (response.win) userData.wins++;
+                    else userData.losses++;
+                    userData.games++;
+                }
+                else if (response.type === 'casino_stats') {
+                    tg.showAlert(response.stats);
+                }
+                else if (response.type === 'notification') {
+                    tg.showAlert(response.message);
+                }
+            } catch (e) {
+                console.error('Error parsing data:', e);
+            }
+        });
+        
+        // Отправляем данные о пользователе при запуске
+        setTimeout(() => {
+            tg.sendData(JSON.stringify({
+                action: 'init',
+                user_id: userData.id,
+                username: userData.username
+            }));
+        }, 500);
+    </script>
+</body>
+</html>
